@@ -47,7 +47,7 @@ public class Publication implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    private Integer id;
+    private Long id;
     @Size(max = 150)
     @Column(name = "title")
     private String title;
@@ -69,27 +69,27 @@ public class Publication implements Serializable {
     @Size(max = 255)
     @Column(name = "timestamp")
     private String timestamp;
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Category categoryId;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private User userId;
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Category categoryId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "publicationId")
     private Collection<Subscription> subscriptionCollection;
 
     public Publication() {
     }
 
-    public Publication(Integer id) {
+    public Publication(Long id) {
         this.id = id;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -149,20 +149,20 @@ public class Publication implements Serializable {
         this.timestamp = timestamp;
     }
 
-    public Category getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Category categoryId) {
-        this.categoryId = categoryId;
-    }
-
     public User getUserId() {
         return userId;
     }
 
     public void setUserId(User userId) {
         this.userId = userId;
+    }
+
+    public Category getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Category categoryId) {
+        this.categoryId = categoryId;
     }
 
     @XmlTransient

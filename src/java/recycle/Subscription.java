@@ -9,13 +9,14 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -31,38 +32,30 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Subscription implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id")
-    private Integer id;
-    @JoinColumn(name = "publication_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Publication publicationId;
+    private Long id;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private User userId;
+    @JoinColumn(name = "publication_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Publication publicationId;
 
     public Subscription() {
     }
 
-    public Subscription(Integer id) {
+    public Subscription(Long id) {
         this.id = id;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
-    }
-
-    public Publication getPublicationId() {
-        return publicationId;
-    }
-
-    public void setPublicationId(Publication publicationId) {
-        this.publicationId = publicationId;
     }
 
     public User getUserId() {
@@ -71,6 +64,14 @@ public class Subscription implements Serializable {
 
     public void setUserId(User userId) {
         this.userId = userId;
+    }
+
+    public Publication getPublicationId() {
+        return publicationId;
+    }
+
+    public void setPublicationId(Publication publicationId) {
+        this.publicationId = publicationId;
     }
 
     @Override

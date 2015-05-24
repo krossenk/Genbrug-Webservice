@@ -8,7 +8,7 @@ import recycle.Category;
 import recycle.Subscription;
 import recycle.User;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2015-05-14T14:09:12")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2015-05-24T11:11:04")
 @StaticMetamodel(Publication.class)
 public class Publication_ { 
 
@@ -17,7 +17,7 @@ public class Publication_ {
     public static volatile SingularAttribute<Publication, String> pickupEndtime;
     public static volatile SingularAttribute<Publication, String> imageURL;
     public static volatile SingularAttribute<Publication, String> description;
-    public static volatile SingularAttribute<Publication, Integer> id;
+    public static volatile SingularAttribute<Publication, Long> id;
     public static volatile SingularAttribute<Publication, String> title;
     public static volatile SingularAttribute<Publication, User> userId;
     public static volatile SingularAttribute<Publication, Category> categoryId;
