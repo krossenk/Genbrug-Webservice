@@ -14,8 +14,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -76,9 +74,6 @@ public class User implements Serializable {
     private Collection<Publication> publicationCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Collection<Subscription> subscriptionCollection;
-    @JoinColumn(name = "Address_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
-    private Address addressid;
 
     public User() {
     }
@@ -172,14 +167,6 @@ public class User implements Serializable {
 
     public void setSubscriptionCollection(Collection<Subscription> subscriptionCollection) {
         this.subscriptionCollection = subscriptionCollection;
-    }
-
-    public Address getAddressid() {
-        return addressid;
-    }
-
-    public void setAddressid(Address addressid) {
-        this.addressid = addressid;
     }
 
     @Override

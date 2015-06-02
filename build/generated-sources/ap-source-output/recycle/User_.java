@@ -4,11 +4,10 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.CollectionAttribute;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
-import recycle.Address;
 import recycle.Publication;
 import recycle.Subscription;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2015-05-24T11:11:04")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2015-05-31T17:27:00")
 @StaticMetamodel(User.class)
 public class User_ { 
 
@@ -22,6 +21,5 @@ public class User_ {
     public static volatile SingularAttribute<User, String> profileimageURL;
     public static volatile SingularAttribute<User, String> username;
     public static volatile SingularAttribute<User, String> lastname;
-    public static volatile SingularAttribute<User, Address> addressid;
 
 }

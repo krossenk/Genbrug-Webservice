@@ -55,7 +55,7 @@ public class Address implements Serializable {
     @Column(name = "country")
     private String country;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "addressid")
-    private Collection<User> userCollection;
+    private Collection<Publication> publicationCollection;
 
     public Address() {
     }
@@ -105,12 +105,12 @@ public class Address implements Serializable {
     }
 
     @XmlTransient
-    public Collection<User> getUserCollection() {
-        return userCollection;
+    public Collection<Publication> getPublicationCollection() {
+        return publicationCollection;
     }
 
-    public void setUserCollection(Collection<User> userCollection) {
-        this.userCollection = userCollection;
+    public void setPublicationCollection(Collection<Publication> publicationCollection) {
+        this.publicationCollection = publicationCollection;
     }
 
     @Override

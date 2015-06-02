@@ -20,12 +20,8 @@ import java.util.logging.Logger;
  * @author Morten
  */
 public class RecycleSQLConnection 
-{
-    
+{    
     static final String WRITE_USER_SQL = "INSERT INTO user(username, password, firstname, lastname, profile_imageURL"
-            + ", phoneNumber, usertype, Address_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    
-    static final String WRITE_USER_SQL2 = "INSERT INTO user(username, password, firstname, lastname, profile_imageURL"
             + ", phoneNumber, usertype) VALUES (?, ?, ?, ?, ?, ?, ?)";
     
     static final String VALIDATE_USER_SQL = "SELECT * FROM user WHERE username= ? AND password= ?";
@@ -43,11 +39,11 @@ public class RecycleSQLConnection
             + "lastname = ?, profile_imageURL = ?,phonenumber = ?, usertype = ? WHERE id = ?";
     
     static final String WRITE_PUBLICATION_SQL = "INSERT INTO publication(title, description, pickuptype, "
-            + "imageURL, pickup_startime, pickup_endtime, user_id, category_id, timestamp) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?)";
+            + "imageURL, pickup_startime, pickup_endtime, user_id, category_id, timestamp, Address_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
     static final String READ_PUBLICATION_SQL = "SELECT * FROM publication WHERE id = ?";
     
-    static final String READ_ALL_PUBLICATION_SQL = "SELECT * FROM publication";
+    static final String READ_ALL_PUBLICATION_SQL = "SELECT * FROM publication ORDER BY id DESC";
     
     static final String WRITE_PUBLICATION_IMAGEURL_SQL = "UPDATE publication SET imageURL= ? WHERE id= ?";
     
@@ -81,32 +77,16 @@ public class RecycleSQLConnection
     public long writeUserObject(Connection conn, User user) throws Exception 
     {
         PreparedStatement pstmt = null;
+           
         
-        int addressId = createAddressObject(conn, user.getAddressid());
-        
-        if(addressId == -1)
-        {
-            pstmt = conn.prepareStatement(WRITE_USER_SQL2, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setString(1, user.getUsername());
-            pstmt.setString(2, user.getPassword());
-            pstmt.setString(3, user.getFirstname());
-            pstmt.setString(4, user.getLastname());
-            pstmt.setString(5, user.getProfileimageURL());
-            pstmt.setString(6, user.getPhonenumber());
-            pstmt.setString(7, user.getUsertype());
-        }
-        else
-        {
-            pstmt = conn.prepareStatement(WRITE_USER_SQL, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setString(1, user.getUsername());
-            pstmt.setString(2, user.getPassword());
-            pstmt.setString(3, user.getFirstname());
-            pstmt.setString(4, user.getLastname());
-            pstmt.setString(5, user.getProfileimageURL());
-            pstmt.setString(6, user.getPhonenumber());
-            pstmt.setString(7, user.getUsertype());
-            pstmt.setInt(8, addressId);                
-        }          
+        pstmt = conn.prepareStatement(WRITE_USER_SQL, Statement.RETURN_GENERATED_KEYS);
+        pstmt.setString(1, user.getUsername());
+        pstmt.setString(2, user.getPassword());
+        pstmt.setString(3, user.getFirstname());
+        pstmt.setString(4, user.getLastname());
+        pstmt.setString(5, user.getProfileimageURL());
+        pstmt.setString(6, user.getPhonenumber());
+        pstmt.setString(7, user.getUsertype());        
 
         pstmt.executeUpdate();
         
@@ -141,7 +121,6 @@ public class RecycleSQLConnection
         tempUser.setPhonenumber(rs.getString(7));
         tempUser.setUsertype(rs.getString(8));
         
-        tempUser.setAddressid(getUserAddress(conn, rs.getInt(9)));
 
         rs.close();
         pstmt.close();
@@ -198,7 +177,7 @@ public class RecycleSQLConnection
         
     }
     
-    private Address getUserAddress(Connection conn, int addressId) throws Exception
+    private Address getAddress(Connection conn, int addressId) throws Exception
     {
         Address tempAddress = null;
         
@@ -271,26 +250,32 @@ public class RecycleSQLConnection
     public long createPublicationObject(Connection conn, Publication pub) throws Exception
     {
         PreparedStatement pstmt = conn.prepareStatement(WRITE_PUBLICATION_SQL, Statement.RETURN_GENERATED_KEYS);  
-
-    // set input parameters
-        pstmt.setString(1, pub.getTitle());
-        pstmt.setString(2, pub.getDescription());
-        pstmt.setString(3, pub.getPickuptype());
-        pstmt.setString(4, pub.getImageURL());
-        pstmt.setString(5, pub.getPickupStartime());
-        pstmt.setString(6, pub.getPickupEndtime());
-        pstmt.setLong(7, pub.getUserId().getId());
-        pstmt.setInt(8, pub.getCategoryId().getId());
-        pstmt.setString(9, pub.getTimestamp());
-        pstmt.executeUpdate();
-        // get the generated key for the id
-        ResultSet rs = pstmt.getGeneratedKeys();
+        ResultSet rs = null;
         long id = -1;
-        rs.next();
-        id = rs.getLong(1);
         
-
-        rs.close();
+        int addressId = createAddressObject(conn, pub.getAddressid());
+        
+        if(addressId != -1)
+        {
+            pstmt.setString(1, pub.getTitle());
+            pstmt.setString(2, pub.getDescription());
+            pstmt.setString(3, pub.getPickuptype());
+            pstmt.setString(4, pub.getImageURL());
+            pstmt.setString(5, pub.getPickupStartime());
+            pstmt.setString(6, pub.getPickupEndtime());
+            pstmt.setLong(7, pub.getUserId().getId());
+            pstmt.setInt(8, pub.getCategoryId().getId());
+            pstmt.setString(9, pub.getTimestamp());
+            pstmt.setInt(10, addressId);
+            pstmt.executeUpdate();
+            // get the generated key for the id
+            rs = pstmt.getGeneratedKeys();
+            
+            rs.next();
+            id = rs.getLong(1);
+            rs.close();
+        }
+        
         pstmt.close();
 
         return id;
@@ -314,6 +299,7 @@ public class RecycleSQLConnection
         tempPub.setUserId(this.readUserObject(conn, rs.getLong(8)));
         tempPub.setCategoryId(this.readCategoryObject(conn, rs.getInt(9)));
         tempPub.setTimestamp(rs.getString(10));
+        tempPub.setAddressid(this.getAddress(conn, rs.getInt(11)));
         tempPub.setSubscriptionCollection(readPublicationSubscriptions(conn, id));
 
         rs.close();
@@ -348,6 +334,7 @@ public class RecycleSQLConnection
                 tempPub.setCategoryId(this.readCategoryObject(conn, rs.getInt(9)));
                 tempPub.setSubscriptionCollection(readPublicationSubscriptions(conn, tempPub.getId()));
                 tempPub.setTimestamp(rs.getString(10));
+                tempPub.setAddressid(getAddress(conn, rs.getInt(11)));
                 tempCollection.add(tempPub);
             }
         }        
@@ -431,9 +418,9 @@ public class RecycleSQLConnection
             while(rs.next())
             {
                 Subscription tempSub = new Subscription();
-                tempSub.setId(rs.getLong(1));
-                tempSub.setPublicationId(new Publication(rs.getLong(2)));
-                tempSub.setUserId(new User(rs.getLong(3)));
+                tempSub.setId(rs.getLong(1));                
+                tempSub.setUserId(new User(rs.getLong(2)));
+                tempSub.setPublicationId(new Publication(rs.getLong(3)));
                 tempCollection.add(tempSub);
             }
         }
@@ -461,9 +448,9 @@ public class RecycleSQLConnection
             while(rs.next())
             {
                 Subscription tempSub = new Subscription();
-                tempSub.setId(rs.getLong(1));
-                tempSub.setPublicationId(new Publication(rs.getLong(2)));
-                tempSub.setUserId(new User(rs.getLong(3)));
+                tempSub.setId(rs.getLong(1));                
+                tempSub.setUserId(new User(rs.getLong(2)));
+                tempSub.setPublicationId(new Publication(rs.getLong(3)));
                 tempCollection.add(tempSub);
             }
         }

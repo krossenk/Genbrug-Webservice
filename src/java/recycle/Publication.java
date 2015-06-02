@@ -75,6 +75,9 @@ public class Publication implements Serializable {
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Category categoryId;
+    @JoinColumn(name = "Address_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private Address addressid;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "publicationId")
     private Collection<Subscription> subscriptionCollection;
 
@@ -163,6 +166,14 @@ public class Publication implements Serializable {
 
     public void setCategoryId(Category categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public Address getAddressid() {
+        return addressid;
+    }
+
+    public void setAddressid(Address addressid) {
+        this.addressid = addressid;
     }
 
     @XmlTransient

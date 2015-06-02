@@ -6,7 +6,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 import recycle.Publication;
 import recycle.User;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2015-05-24T11:11:04")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2015-05-31T17:27:00")
 @StaticMetamodel(Subscription.class)
 public class Subscription_ { 
 
